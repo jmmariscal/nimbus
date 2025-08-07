@@ -28,7 +28,7 @@ struct WeatherView: View {
                         .shadow(radius: 4)
                     
                     if !viewModel.city.trimmingCharacters(in: .whitespaces).isEmpty {
-                        Button("Search for weather") {
+                        Button("Search") {
                             Task {
                                 await viewModel.getWeather()
                             }
@@ -39,7 +39,7 @@ struct WeatherView: View {
                         .frame(height: 50)
                     }
 
-                    Button("Use Current Location") {
+                    Button("Search Current Location") {
                         locationManager.requestLocation()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                             if let location = locationManager.location {
