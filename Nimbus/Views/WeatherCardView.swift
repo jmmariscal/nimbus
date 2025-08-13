@@ -34,7 +34,6 @@ struct WeatherCardView: View {
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(radius: 10)
-        .padding(.horizontal)
         .opacity(animate ? 1 : 0)
         .offset(y: animate ? 0 : 40)
         .onAppear {

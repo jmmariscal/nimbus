@@ -24,38 +24,37 @@ struct WeatherView: View {
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.3)))
                         .foregroundColor(.white)
                         .font(.headline)
-                        .padding(.horizontal)
                         .shadow(radius: 4)
                     
-                    if !viewModel.city.trimmingCharacters(in: .whitespaces).isEmpty {
-                        Button("Search") {
-                            Task {
-                                await viewModel.getWeather()
-                            }
-                        }
-                        .buttonStyle(WeatherButtonStyle(background: .indigo))
-                        .transition(.opacity)
-                        .padding(.horizontal)
-                        .frame(height: 50)
-                    }
-
-                    Button("Search Current Location") {
-                        locationManager.requestLocation()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            if let location = locationManager.location {
+                    HStack {
+                        if !viewModel.city.trimmingCharacters(in: .whitespaces).isEmpty {
+                            Button("Search") {
                                 Task {
-                                    await viewModel.getWeatherForCurrentLocation(
-                                        lat: location.coordinate.latitude,
-                                        lon: location.coordinate.longitude
-                                    )
+                                    await viewModel.getWeather()
                                 }
-                            } else {
-                                viewModel.errorMessage = "Unable to get current location."
+                            }
+                            .buttonStyle(WeatherButtonStyle(background: .indigo))
+                            .transition(.opacity)
+                            .frame(height: 50)
+                        }
+
+                        Button("Current Location") {
+                            locationManager.requestLocation()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                if let location = locationManager.location {
+                                    Task {
+                                        await viewModel.getWeatherForCurrentLocation(
+                                            lat: location.coordinate.latitude,
+                                            lon: location.coordinate.longitude
+                                        )
+                                    }
+                                } else {
+                                    viewModel.errorMessage = "Unable to get current location."
+                                }
                             }
                         }
+                        .buttonStyle(WeatherButtonStyle(background: .mint))
                     }
-                    .buttonStyle(WeatherButtonStyle(background: .mint))
-                    .padding(.horizontal)
 
                     if viewModel.isLoading {
                         ProgressView()
@@ -73,12 +72,10 @@ struct WeatherView: View {
                             )))
                             .frame(height: 200)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .padding()
                         }
                     } else if let error = viewModel.errorMessage {
                         Text(error)
                             .foregroundColor(.red)
-                            .padding()
                     }
 
                     Spacer()
